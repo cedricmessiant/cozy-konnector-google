@@ -33,10 +33,18 @@ async function start(fields, doRetry = true) {
     })
 
     log('info', 'Getting account infos')
-    const accountInfo = await googleUtils.getAccountInfo({
-      personFields: 'emailAddresses'
-    })
-    const accountEmail = accountInfo.emailAddresses[0].value
+    let accountEmail = ''
+    try {
+      const accountInfo = await googleUtils.getAccountInfo({
+        personFields: 'emailAddresses'
+      })
+      accountEmail = accountInfo.emailAddresses[0].value
+      log('debug', 'account found: ' + accountInfo)
+    } catch (err) {
+      log('error', 'ERROR')
+      log('debug', err.message)
+      log('debug', err)
+    }
 
     log('info', 'Getting cozy contact account')
     const contactAccount = await cozyUtils.findOrCreateContactAccount(
